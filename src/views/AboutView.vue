@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { gsap } from 'gsap'
 import { useI18n } from 'vue-i18n'

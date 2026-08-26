@@ -26,7 +26,7 @@ const products = ref<Product[]>([
   },
   {
     id: 'simple-ssh',
-    image: new URL('@/assets/sections/products/SimpleSSH.png', import.meta.url).href,
+    image: new URL('@/assets/sections/products/sac.png', import.meta.url).href,
     name: 'SimpleSSH',
     description: 'A modern, intuitive SSH client designed for seamless cloud server management with an elegant interface.',
     features: ['Modern UI', 'SSH Management', 'Cloud Ready', 'Cross-Platform'],

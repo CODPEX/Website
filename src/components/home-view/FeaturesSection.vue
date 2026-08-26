@@ -9,11 +9,11 @@ onMounted(() => {
   featureItems.forEach((item) => {
     const featureItem = item as HTMLElement
 
-    featureItem.addEventListener('mouseenter', () => {
+  featureItem.addEventListener('mouseenter', () => {
       gsap.to(featureItem, {
         duration: 0.3,
         x: 5,
-        boxShadow: '0 5px 20px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 5px 20px var(--shadow-md)',
         ease: 'power2.out',
       })
     })
@@ -22,7 +22,7 @@ onMounted(() => {
       gsap.to(featureItem, {
         duration: 0.3,
         x: 0,
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
+        boxShadow: '0 2px 10px var(--shadow-sm)',
         ease: 'power2.out',
       })
     })

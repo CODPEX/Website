@@ -10,7 +10,7 @@ const { t } = useI18n()
     <div class="contact-section-container">
       <div class="contact-section-header">
         <span class="contact-section-label">{{ t('home.contact.title.a') }}</span>
-        <h3 class="contact-section-title">
+        <h3 style="color:white" class="contact-section-title">
           {{ t('home.contact.title.b1') }}
           <span
             style="
@@ -113,7 +113,7 @@ const { t } = useI18n()
 .contact-section-title {
   font-size: 32px;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 16px;
   font-family: 'DTJBT', sans-serif;
 }
@@ -122,7 +122,7 @@ const { t } = useI18n()
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
-  color: #dedede;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
@@ -145,6 +145,12 @@ const { t } = useI18n()
   padding: 32px;
   width: 100%;
   box-sizing: border-box;
+}
+
+[data-theme="dark"] .form-wrapper {
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .form-wrapper .item {
@@ -176,6 +182,12 @@ const { t } = useI18n()
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 12px 20px;
+}
+
+[data-theme="dark"] .copyright-content {
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .copyright-text {

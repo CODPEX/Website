@@ -19,7 +19,7 @@ const products = [
     githubKey: 'home.projects.products.a.buttons.github',
     viewHref: 'https://codpex.com/products/login-api',
     githubHref: 'https://github.com/CODPEX/ALoginAPI',
-    imageSrc: '/src/assets/sections/products/API.png',
+    imageSrc: new URL('@/assets/sections/products/API.png', import.meta.url).href,
   },
   {
     id: 'b',
@@ -29,7 +29,7 @@ const products = [
     githubKey: 'home.projects.products.b.buttons.github',
     viewHref: 'https://codpex.com/products/simple-ssh',
     githubHref: 'https://github.com/CODPEX/SimpleSSH',
-    imageSrc: '/src/assets/sections/products/SimpleSSH.png',
+    imageSrc: new URL('@/assets/sections/products/sac.png', import.meta.url).href,
   },
 ]
 
@@ -79,10 +79,10 @@ onMounted(() => {
   productButtons.forEach((button) => {
     const btn = button as HTMLElement
     btn.addEventListener('mouseenter', () => {
-      gsap.to(btn, { duration: 0.3, scale: 1.05, boxShadow: '0 10px 25px rgba(79, 70, 229, 0.3)', ease: 'power2.out' })
+      gsap.to(btn, { duration: 0.3, scale: 1.05, boxShadow: '0 10px 25px var(--shadow-md)', ease: 'power2.out' })
     })
     btn.addEventListener('mouseleave', () => {
-      gsap.to(btn, { duration: 0.3, scale: 1, boxShadow: '0 2px 10px rgba(79, 70, 229, 0.2)', ease: 'power2.out' })
+      gsap.to(btn, { duration: 0.3, scale: 1, boxShadow: '0 2px 10px var(--shadow-sm)', ease: 'power2.out' })
     })
   })
 })
@@ -157,7 +157,7 @@ onMounted(() => {
   display: inline-block;
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 12px;
@@ -229,7 +229,7 @@ onMounted(() => {
 }
 
 .product-title span {
-  background: linear-gradient(to right, #4f46e5, #8b5cf6);
+  background: linear-gradient(to right, var(--accent), #a855f7);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

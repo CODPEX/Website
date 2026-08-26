@@ -50,8 +50,8 @@ onMounted(() => {
     </h3>
     <p ref="subtitleRef">{{ t('home.hero.description') }}</p>
     <div class="button-group" ref="buttonGroupRef">
-      <Button icon="pi pi-file" severity="contrast" :label="t('home.hero.buttons.a')" as="a" href="/products" />
-      <Button icon="pi pi-users" severity="contrast" :label="t('home.hero.buttons.b')" as="a" href="/contact" />
+      <Button icon="pi pi-file" severity="contrast" :label="t('home.hero.buttons.a')" as="router-link" to="/products" />
+      <Button icon="pi pi-users" severity="contrast" :label="t('home.hero.buttons.b')" as="router-link" to="/contact" />
       <Button icon="pi pi-github" severity="contrast" :label="t('home.hero.buttons.c')" as="a" href="https://github.com/CODPEX" target="_blank" />
     </div>
     <div class="scroll-indicator">
@@ -152,7 +152,7 @@ p {
 .button-group :deep(.p-button) { border-radius: 50px; padding: 12px 28px; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.02em; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); backdrop-filter: blur(8px); border: 1px solid var(--border-color); }
 .button-group :deep(.p-button:not(.p-button-text):not(.p-button-link)) { background: rgba(255,255,255,0.08); color: var(--text-primary); box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
 [data-theme="dark"] .button-group :deep(.p-button:not(.p-button-text):not(.p-button-link)) { background: rgba(255,255,255,0.05); color: var(--text-primary); box-shadow: 0 2px 20px rgba(0,0,0,0.2); }
-.button-group :deep(.p-button:hover:not(:disabled)) { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(79,70,229,0.2) !important; border-color: var(--accent); }
+.button-group :deep(.p-button:hover:not(:disabled)) { transform: translateY(-2px); box-shadow: 0 8px 30px var(--shadow-lg) !important; border-color: var(--accent); }
 [data-theme="dark"] .button-group :deep(.p-button:hover:not(:disabled)) { box-shadow: 0 8px 30px rgba(99,102,241,0.3) !important; }
 
 /* ── Scroll Indicator ── */
