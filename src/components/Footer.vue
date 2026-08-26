@@ -11,13 +11,13 @@
           <h4>{{ t('footer.services.title') }}</h4>
           <ul>
             <li>
-              <a href="https://docs.aurorastudio.top/">{{ t('footer.services.docs') }}</a>
+              <a href="https://docs.codpex.top/">{{ t('footer.services.docs') }}</a>
             </li>
             <li>
-              <a href="#">{{ t('footer.services.simpleSSH') }}</a>
+              <a href="https://github.com/CODPEX/SimpleSSH">{{ t('footer.services.simpleSSH') }}</a>
             </li>
             <li>
-              <a href="#">{{ t('footer.services.starsAICopilot') }}</a>
+              <a href="https://github.com/CODPEX/StarsAICopilot.Avalonia">{{ t('footer.services.starsAICopilot') }}</a>
             </li>
           </ul>
         </div>
@@ -40,10 +40,9 @@
       <div class="footer-bottom">
         <div class="copyright">
           <p>
-            aurorastudio.top:
+            codpex.top:
             <a class="link" href="https://beian.miit.gov.cn/">粤ICP备2025371287号-1</a><br />
-            Copyright © 2023 - {{ new Date().getFullYear() }} CODEPEX ( The original AURORA ). All
-            rights reserved.
+            Copyright © 2023 - {{ new Date().getFullYear() }} CODPEX. All rights reserved.
           </p>
         </div>
         <div class="back-to-top">
@@ -75,12 +74,12 @@ export default {
 
 <style scoped>
 .designer-footer {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  color: #333;
+  background: var(--footer-bg);
+  color: var(--text-primary);
   padding: 5rem 2rem 3rem;
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.03);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -5px 30px var(--shadow-md);
 }
 
 .footer-container {
@@ -103,6 +102,7 @@ export default {
   text-transform: uppercase;
   font-size: 1rem;
   position: relative;
+  color: var(--text-primary);
 }
 
 .footer-section h3::after,
@@ -113,7 +113,7 @@ export default {
   left: 0;
   width: 40px;
   height: 2px;
-  background: linear-gradient(90deg, #666, transparent);
+  background: linear-gradient(90deg, var(--text-primary), transparent);
 }
 
 .brand-logo {
@@ -121,7 +121,7 @@ export default {
   font-weight: 300;
   letter-spacing: 4px;
   margin-bottom: 0.8rem;
-  background: linear-gradient(90deg, #333, #666);
+  background: linear-gradient(90deg, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -129,7 +129,7 @@ export default {
 
 .brand-tagline {
   font-style: italic;
-  color: #777;
+  color: var(--text-secondary);
   font-size: 1rem;
   margin-bottom: 2.5rem;
   position: relative;
@@ -142,7 +142,7 @@ export default {
   left: 0;
   top: -5px;
   font-size: 2rem;
-  color: #ddd;
+  color: var(--text-muted);
   font-style: normal;
 }
 
@@ -156,6 +156,7 @@ export default {
   font-size: 1rem;
   transition: all 0.3s ease;
   padding: 5px 0;
+  color: var(--text-secondary);
 }
 
 .footer-section li:hover {
@@ -163,7 +164,7 @@ export default {
 }
 
 .footer-section a {
-  color: #555;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
@@ -177,12 +178,12 @@ export default {
   left: 0;
   width: 0;
   height: 1px;
-  background: linear-gradient(90deg, #666, #999);
+  background: linear-gradient(90deg, var(--text-primary), var(--text-secondary));
   transition: width 0.4s ease;
 }
 
 .footer-section a:hover {
-  color: #333;
+  color: var(--text-primary);
 }
 
 .footer-section a:hover::after {
@@ -194,7 +195,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding-top: 2.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--border-color);
   position: relative;
 }
 
@@ -205,19 +206,19 @@ export default {
   left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #ddd, transparent);
+  background: linear-gradient(90deg, transparent, var(--border-color), transparent);
 }
 
 .copyright p {
   font-size: 0.9rem;
-  color: #777;
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
 .top-button {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border: 2px solid #ddd;
-  color: #666;
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-elevated));
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -227,7 +228,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px var(--shadow-md);
 }
 
 .arrow {
@@ -235,11 +236,11 @@ export default {
 }
 
 .top-button:hover {
-  background: linear-gradient(135deg, #666, #333);
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
   color: white;
   transform: translateY(-5px) rotate(360deg);
-  border-color: #333;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 8px 25px var(--shadow-lg);
 }
 
 .top-button:hover .arrow {

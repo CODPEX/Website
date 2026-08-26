@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import HeroSection from '@/components/products-view/HeroSection.vue'
 import CategorySection from '@/components/products-view/CategorySection.vue'
 import ProductsSection from '@/components/products-view/ProductsSection.vue'
 
 interface Product {
-  id: number
+  id: string
   image: string
   name: string
   description: string
@@ -16,37 +16,24 @@ interface Product {
 
 const products = ref<Product[]>([
   {
-    id: 1,
-    image: '/images/product1.jpg',
-    name: 'Product One',
-    description: 'This is the first product.',
-    features: ['Feature 1', 'Feature 2', 'Feature 3'],
-    buttonText: 'Learn More',
-    buttonLink: '/product/1',
+    id: 'login-api',
+    image: new URL('@/assets/sections/products/API.png', import.meta.url).href,
+    name: 'A-Login API',
+    description: 'A robust authentication solution built with Python Flask, providing secure login systems and comprehensive user management.',
+    features: ['Python Flask', 'Secure Authentication', 'User Management', 'Easy Integration'],
+    buttonText: 'GitHub',
+    buttonLink: 'https://github.com/CODPEX/ALoginAPI',
   },
   {
-    id: 2,
-    image: '/images/product2.jpg',
-    name: 'Product Two',
-    description: 'This is the second product.',
-    features: ['Feature A', 'Feature B', 'Feature C'],
-    buttonText: 'Learn More',
-    buttonLink: '/product/2',
+    id: 'simple-ssh',
+    image: new URL('@/assets/sections/products/SimpleSSH.png', import.meta.url).href,
+    name: 'SimpleSSH',
+    description: 'A modern, intuitive SSH client designed for seamless cloud server management with an elegant interface.',
+    features: ['Modern UI', 'SSH Management', 'Cloud Ready', 'Cross-Platform'],
+    buttonText: 'GitHub',
+    buttonLink: 'https://github.com/CODPEX/SimpleSSH',
   },
 ])
-
-onMounted(async () => {
-  try {
-    const response = await fetch('/api/products')
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    products.value = data
-  } catch (error) {
-    console.error('Failed to fetch products:', error)
-  }
-})
 </script>
 
 <template>

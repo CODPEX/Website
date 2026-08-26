@@ -20,6 +20,7 @@
     -->
     <Menubar :model="items" class="navbar-blur">
       <template #start>
+        <ThemeToggle />
         <img
           src="@/assets/logo.svg"
           height="40"
@@ -117,6 +118,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Cookies from 'js-cookie'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t, locale } = useI18n()
 
@@ -145,14 +147,14 @@ const items = computed(() => [
 
 const selectedLanguage = ref()
 const languages = ref([
-  { name: 'English (USA) ', code: 'en' },
-  { name: '简体中文 (PRC)', code: 'zh-CN' },
+  { name: 'English (USA)', code: 'en' },
+  { name: '简体中文 (PRC)', code: 'zh' },
 ])
 
 const getFlagUrl = (code) => {
   const flagMap = {
     en: 'https://flagcdn.com/w40/us.png',
-    'zh-CN': 'https://flagcdn.com/w40/cn.png',
+    zh: 'https://flagcdn.com/w40/cn.png',
   }
   return flagMap[code] || 'https://flagcdn.com/w40/us.png'
 }
@@ -182,13 +184,13 @@ onMounted(() => {
 }
 
 .navbar-blur {
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--nav-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow:
     0 4px 30px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--nav-border);
   border-radius: 12px;
   margin: 10px;
   z-index: 1000;

@@ -22,11 +22,9 @@
               <span class="feature-text">{{ feature }}</span>
             </div>
           </div>
-          <Button
-            :label="product.buttonText"
-            @click="selectProduct(product)"
-            class="p-button-secondary"
-          />
+          <a :href="product.buttonLink" target="_blank" class="product-btn">
+            <i class="pi pi-github"></i> {{ product.buttonText }}
+          </a>
         </div>
       </div>
     </div>
@@ -34,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from 'primevue/button'
+import { ref } from 'vue'
 
 interface Product {
   id: string
@@ -43,22 +41,15 @@ interface Product {
   image: string
   features: string[]
   buttonText: string
+  buttonLink: string
 }
 
 const props = defineProps<{
   products: Product[]
 }>()
 
-const emit = defineEmits<{
-  (e: 'selectProduct', product: Product): void
-}>()
-
 const isLeft = (index: number): boolean => {
   return index % 2 === 0
-}
-
-const selectProduct = (product: Product) => {
-  emit('selectProduct', product)
 }
 </script>
 
@@ -121,14 +112,14 @@ const selectProduct = (product: Product) => {
 .product-name {
   font-size: 1.8rem;
   margin-bottom: 1rem;
-  color: #333;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .product-description {
   font-size: 1rem;
   margin-bottom: 1.5rem;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -146,18 +137,44 @@ const selectProduct = (product: Product) => {
 }
 
 .feature-check {
-  color: #4caf50;
+  color: var(--accent);
   font-weight: bold;
   font-size: 1.2rem;
   min-width: 20px;
 }
 
 .feature-text {
-  color: #333;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 /* 移除按钮自定义样式，使用默认样式 */
+
+.product-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.product-btn:hover {
+  background: var(--accent);
+  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.product-btn i {
+  font-size: 1.1rem;
+}
 
 .product-item:nth-child(odd) .product-content {
   flex-direction: row;

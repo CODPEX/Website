@@ -4,8 +4,8 @@
       height: 100vh;
       margin: 0;
       z-index: 1;
-      background: linear-gradient(135deg, #e9ecef 0%, #ced4da 50%, #adb5bd 100%);
-      color: #333;
+      background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      color: var(--text-primary);
       position: relative;
       overflow: hidden;
     "

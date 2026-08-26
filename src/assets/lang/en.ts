@@ -25,7 +25,7 @@ export default {
     contact: {
       title: 'Contact',
       emailLabel: 'Email',
-      email: "thzstudent1145{'@'}163.com",
+      email: 'support@codpex.top',
       button: 'Learn more ways',
     },
     backToTop: 'Back to top',
@@ -148,6 +148,39 @@ export default {
         description: 'A powerful AI copilot, help you to build your own AI application with ease.',
         buttonLabel: 'Learn More',
       },
+    },
+  },
+  about: {
+    hero: {
+      badge: 'CODPEX',
+      title: 'From the source of an idea to the summit of execution.',
+      description:
+        'We are a passionate team building open-source tools and software that empower developers and creators around the world.',
+    },
+    mission: {
+      title: 'Our Mission',
+      description:
+        'At CODPEX, we believe in the power of open-source and collaboration. Our mission is to create high-quality, accessible tools that solve real problems — from authentication APIs to AI-powered development assistants.',
+    },
+    projects: {
+      title: 'Our Projects',
+    },
+    values: {
+      title: 'What Drives Us',
+    },
+    cta: {
+      title: 'Get Involved',
+      description: 'Explore our open-source projects on GitHub or check out our documentation.',
+      github: 'GitHub',
+      docs: 'Documentation',
+    },
+  },
+  contact: {
+    page: {
+      title: 'Get in Touch',
+      description: 'We\'d love to hear from you. Reach out through any of the channels below.',
+      open: 'Open',
+      follow: 'Follow Us',
     },
   },
 }

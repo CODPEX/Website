@@ -21,7 +21,6 @@ onMounted(() => {
   ctx = canvas.getContext('2d')
   if (!ctx) return
 
-  // Set canvas size
   const resizeCanvas = () => {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
@@ -29,6 +28,32 @@ onMounted(() => {
 
   resizeCanvas()
   window.addEventListener('resize', resizeCanvas)
+
+  const isDarkMode = () => document.documentElement.getAttribute('data-theme') === 'dark'
+  const getColors = () => {
+    if (isDarkMode()) {
+      return {
+        bg: '#0f172a',
+        gridStroke: 'rgba(99, 102, 241, 0.08)',
+        colors: [
+          'hsla(243, 71%, 52%, 0.45)',
+          'hsla(271, 76%, 53%, 0.4)',
+          'hsla(262, 65%, 50%, 0.4)',
+          'hsla(250, 69%, 52%, 0.45)',
+        ],
+      }
+    }
+    return {
+      bg: '#ffffff',
+      gridStroke: 'rgba(79, 70, 229, 0.06)',
+      colors: [
+        'hsla(236, 71%, 55%, 0.3)',
+        'hsla(271, 71%, 55%, 0.25)',
+        'hsla(262, 65%, 55%, 0.25)',
+        'hsla(250, 69%, 55%, 0.3)',
+      ],
+    }
+  }
 
   // Generate adjacent colors
   const generateAdjacentColors = (): { color1: string; color2: string }[] => {
@@ -119,12 +144,13 @@ onMounted(() => {
     // Clear canvas
     ctx!.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw white background
-    ctx!.fillStyle = '#ffffff'
+    // Draw background
+    const colors = getColors()
+    ctx!.fillStyle = colors.bg
     ctx!.fillRect(0, 0, canvas.width, canvas.height)
 
     // Draw grid with animation
-    ctx!.strokeStyle = 'rgba(0, 0, 0, 0.1)'
+    ctx!.strokeStyle = colors.gridStroke
     ctx!.lineWidth = 0.5
 
     const gridSize = 40

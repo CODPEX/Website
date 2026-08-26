@@ -25,7 +25,7 @@ export default {
     contact: {
       title: '联系我们',
       emailLabel: '邮箱',
-      email: "thzstudent1145{'@'}163.com",
+      email: 'support@codpex.top',
       button: '了解更多方式',
     },
     backToTop: '返回顶部',
@@ -130,6 +130,39 @@ export default {
       button: '了解更多方式',
       backgroundCopyrightInfo:
         '我们已与原作者沟通，并获得了图片原作者提供的 \'<a class="link" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>\' 授权。',
+    },
+  },
+  about: {
+    hero: {
+      badge: 'CODPEX',
+      title: '从灵感的源头到执行的巅峰。',
+      description:
+        '我们是一支充满热情的团队，致力于构建开源工具与软件，赋能全球的开发者与创作者。',
+    },
+    mission: {
+      title: '我们的使命',
+      description:
+        '在 CODPEX，我们相信开源与协作的力量。我们的使命是创造高质量、易用的工具来解决实际问题——从身份验证 API 到 AI 驱动的开发助手。',
+    },
+    projects: {
+      title: '我们的项目',
+    },
+    values: {
+      title: '我们的价值观',
+    },
+    cta: {
+      title: '加入我们',
+      description: '在 GitHub 上探索我们的开源项目，或查看我们的文档。',
+      github: 'GitHub',
+      docs: '文档',
+    },
+  },
+  contact: {
+    page: {
+      title: '联系我们',
+      description: '我们很乐意听到您的声音。通过以下任一渠道与我们取得联系。',
+      open: '打开',
+      follow: '关注我们',
     },
   },
 }

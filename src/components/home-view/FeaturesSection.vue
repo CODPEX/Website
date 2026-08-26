@@ -80,7 +80,7 @@ onMounted(() => {
 
 <style scoped>
 .features-section-container {
-  background-color: rgb(252, 252, 252);
+  background-color: var(--bg-secondary);
   padding: 64px 0;
 }
 
@@ -99,7 +99,7 @@ onMounted(() => {
   display: inline-block;
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 12px;
@@ -108,7 +108,7 @@ onMounted(() => {
 .features-section-title {
   font-size: 32px;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--text-primary);
   margin-bottom: 16px;
   font-family: 'DTJBT', sans-serif;
 }
@@ -117,7 +117,7 @@ onMounted(() => {
   max-width: 600px;
   margin: 0 auto;
   font-size: 18px;
-  color: #6b7280;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
@@ -134,23 +134,23 @@ onMounted(() => {
   min-width: 200px;
   max-width: 300px;
   padding: 24px;
-  background: linear-gradient(to bottom right, white, #f9fafb);
+  background: linear-gradient(to bottom right, var(--bg-card), var(--bg-secondary));
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px var(--shadow-sm);
   transition: all 0.3s ease;
   margin: 0 12px;
 }
 
 .feature-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 20px var(--shadow-md);
 }
 
 .feature-label {
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
@@ -159,14 +159,14 @@ onMounted(() => {
 .feature-title {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   margin-bottom: 12px;
   font-family: 'DTJBT', sans-serif;
 }
 
 .feature-description {
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 

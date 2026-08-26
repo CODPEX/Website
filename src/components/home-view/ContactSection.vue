@@ -14,10 +14,12 @@ const { t } = useI18n()
           {{ t('home.contact.title.b1') }}
           <span
             style="
-              background: linear-gradient(to right, white, black);
+              background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 50%, #ec4899 100%);
               -webkit-background-clip: text;
               background-clip: text;
               -webkit-text-fill-color: transparent;
+              background-size: 200% 200%;
+              animation: heroGradientShift 4s ease-in-out infinite;
             "
             >{{ t('home.contact.title.b2') }}</span
           >
@@ -102,7 +104,7 @@ const { t } = useI18n()
   display: inline-block;
   font-size: 14px;
   font-weight: 500;
-  color: #4f46e5;
+  color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 12px;
@@ -178,7 +180,7 @@ const { t } = useI18n()
 
 .copyright-text {
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--text-muted);
   font-weight: 400;
   margin: 0;
   line-height: 1.4;

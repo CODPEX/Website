@@ -61,13 +61,13 @@ checkCookieConsent()
 }
 
 .main {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--bg-card);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow:
-    0 4px 30px rgba(0, 0, 0, 0.1),
+    0 4px 30px var(--shadow-md),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--nav-border);
   border-radius: 12px;
   padding: 20px;
   max-width: 500px;

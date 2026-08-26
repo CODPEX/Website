@@ -24,6 +24,9 @@ import CookieMsgCard from '@/components/CookieMsgCard.vue'
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
 }
 
 .fixed-top-header {
