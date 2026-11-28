@@ -1,0 +1,37 @@
+{
+  "name": "codpex.website",
+  "version": "0.0.67",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start",
+    "types:check": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontpkg/alimama-shu-hei-ti": "^1.0.5",
+    "@fontsource/great-vibes": "^5.3.0",
+    "@fontsource/mooli": "^5.3.0",
+    "@hugeicons/core-free-icons": "^4.3.3",
+    "@hugeicons/react": "^1.1.10",
+    "cn": "^0.5.2",
+    "fumadocs-core": "16.19.5",
+    "fumadocs-mdx": "15.6.4",
+    "lucide-react": "^1.71.0",
+    "motion": "^12.23.12",
+    "next": "16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/mdx": "^2.0.14",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^7.0.2"
+  }
+}

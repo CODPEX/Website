@@ -1,0 +1,82 @@
+---
+id: 1
+title: Overview
+description: Request a Remote Key Provisioning certificate from Google and package it as a TEESimulator-compatible keybox.xml.
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# Overview
+
+RKP Toolkit is an external open-source project maintained by [@kanseijo](https://github.com/kanseijo). It requests a Remote Key Provisioning (RKP) certificate from Google through the device's own RKP HAL, then packages it as a `keybox.xml` that TEESimulator can use.
+
+> **External project.** This project is not maintained by CODPEX. Requirements, behavior, and support come from the upstream repository. Always refer to the [original README](https://github.com/kanseijo/rkp-toolkit) for the latest information.
+
+## What it does
+
+- Talks to the device's `IRemotelyProvisionedComponent` HAL through a bundled bridge (`rkp_bridge.jar`)
+- Fetches the Endorsement Key chain from `remoteprovisioning.googleapis.com`
+- Has the device TEE generate and sign the CSR, then submits it to Google
+- Packs the returned certificate chain and SEC1 private key into `keybox.xml`
+
+The tool only generates files. It never deploys them automatically.
+
+## Requirements
+
+| Requirement | Notes |
+|---|---|
+| Android 12 or newer | Requires the RKP HAL (`IRemotelyProvisionedComponent`) |
+| Root access | Mandatory for reaching the RKP HAL |
+| Termux v0.118.3+ | Do **not** install Termux from Google Play |
+| Google connectivity | Access to `remoteprovisioning.googleapis.com` |
+
+## Tested devices
+
+These results come from the upstream project and are observations, not guarantees:
+
+| Device | System | Result |
+|---|---|---|
+| OnePlus Ace 6 (PLQ110) | Android 16 | Works |
+| ASUS ROG Phone 9 Pro | Android 15 | Works |
+| Redmi Note 11 (spes) | Android 13 | No RKP HAL |
+| OnePlus Ace 3 (PJE110) | A15 system + A13 vendor | HAL lacks v3 methods |
+
+Failures on the last two are not tool defects: as long as one unmodified device works, the toolchain itself is fine.
+
+## Repository layout
+
+```text
+.
+├── issue.sh              # entry point
+├── setup.sh              # mirror benchmark + dependencies
+├── rkp_toolkit.py        # main logic
+├── rkp_csr.py            # Android 13 CSR assembly
+├── build.sh              # rebuild the jar
+├── rkp_bridge.jar        # HAL bridge (prebuilt)
+├── src/
+│   ├── RkpBridge.java    # reflective RKP HAL calls
+│   └── RkpProbe.java     # HAL probing
+├── docs/
+│   └── android13-rkp-research.md
+├── README.md
+├── README.zh-CN.md
+├── SECURITY.md
+├── CONTRIBUTING.md
+└── LICENSE
+```
+
+`rkp_bridge.jar` is committed, so Termux users never need to build it.
+
+## Documentation map
+
+<Cards>
+  <Card title="Quick Start" href="/en/docs/products/rkp-toolkit/quickstart" description="Install Termux, issue a certificate, and find the keybox." />
+  <Card title="Commands & Setup" href="/en/docs/products/rkp-toolkit/usage" description="CLI commands, flags, mirror setup, and dependencies." />
+  <Card title="Build from Source" href="/en/docs/products/rkp-toolkit/build" description="Rebuild the Java bridge and verify it matches upstream." />
+  <Card title="How It Works" href="/en/docs/products/rkp-toolkit/internals" description="Protocol flow, Android version differences, and keybox requirements." />
+  <Card title="Troubleshooting & Security" href="/en/docs/products/rkp-toolkit/troubleshooting" description="Common errors, diagnostics, and safety notes." />
+</Cards>

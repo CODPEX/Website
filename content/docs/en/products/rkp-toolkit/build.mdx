@@ -1,0 +1,71 @@
+---
+id: 4
+title: Build from Source
+description: Rebuild rkp_bridge.jar, compile the Python tooling, and verify the binary matches the source.
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# Build from Source
+
+Only needed when you want to modify the code or audit the bundled binary. Regular users should use the release zip, which already contains `rkp_bridge.jar`.
+
+## Clone
+
+```bash
+git clone https://github.com/kanseijo/rkp-toolkit.git
+cd rkp-toolkit
+```
+
+## Python part
+
+No build step: run it directly.
+
+```bash
+python3 rkp_csr.py          # core self-test
+./issue.sh
+```
+
+## Java part
+
+`src/RkpBridge.java` calls the RKP HAL through reflection, so it must be compiled to dex and packed into a jar.
+
+### Dependencies
+
+| Dependency | Purpose |
+|---|---|
+| JDK 8+ | `javac` compiles `.java` |
+| `android.jar` (or equivalent stub) | Compile-time Android APIs |
+| D8 (`com.android.tools.r8.D8` inside `r8.jar`) | class → dex |
+| Python 3 | Packs `classes.dex` into the jar |
+
+### Build
+
+```bash
+sh build.sh <android.jar> [r8.jar]
+```
+
+This produces `rkp_bridge.jar` (about 9.6 KB), overwriting the committed copy.
+
+Where to get the dependencies:
+
+- `android.jar`: Android SDK `platforms/android-35/android.jar`, or an AOSP build output
+- `r8.jar`: Android SDK `build-tools/*/lib/r8.jar`, or [r8 releases](https://r8.googlesource.com/r8)
+
+## Verify the binary matches the source
+
+```bash
+sh build.sh <android.jar> r8.jar
+python3 -c "
+import zipfile
+d = zipfile.ZipFile('rkp_bridge.jar').read('classes.dex')
+for k in [b'generateCertificateRequestV2', b'RKP_CALLER_UID', b'strongbox']:
+    print(k.decode(), 'OK' if k in d else 'MISSING')
+"
+```
+
+With the same JDK and D8 version, `classes.dex` is **byte-for-byte reproducible** (verified upstream). The zip container records timestamps, so the jar hash changes, but the dex content stays identical.

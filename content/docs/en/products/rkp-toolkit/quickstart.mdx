@@ -1,0 +1,121 @@
+---
+id: 2
+title: Quick Start
+description: Install Termux, download the release, issue an RKP certificate, and find the generated keybox.xml.
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# Quick Start
+
+All commands below run on the Android device itself, inside Termux with root access.
+
+## 1. Install Termux
+
+Download Termux **v0.118.3 or newer**:
+
+| Source | Link |
+|---|---|
+| GitHub Releases (recommended) | https://github.com/termux/termux-app/releases |
+| F-Droid (Chinese) | https://f-droid.org/zh/packages/com.termux/ |
+| F-Droid (English) | https://f-droid.org/en/packages/com.termux/ |
+
+> [!WARNING] Do not install Termux from Google Play. The Play build is stuck at 0.118.0, and switching mirrors will fail with `index update failed`.
+
+Verify the version:
+
+```bash
+echo $TERMUX_VERSION
+# expected: 0.118.3 or newer
+```
+
+`issue.sh` checks this on startup and warns when the version is too old.
+
+## 2. Download the toolkit
+
+```bash
+pkg install -y unzip curl
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/latest/download/rkp-toolkit.zip
+unzip rkp-toolkit.zip
+cd rkp-toolkit
+```
+
+The `latest/download` link always points to the newest release and keeps the same filename. To pin a version:
+
+```bash
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/download/v1.0.0/rkp-toolkit.zip
+```
+
+Optionally verify the checksum:
+
+```bash
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/latest/download/SHA256SUMS
+sha256sum -c SHA256SUMS
+```
+
+## 3. Issue the certificate
+
+```bash
+./issue.sh
+```
+
+On first run the script checks dependencies and calls `setup.sh`, which benchmarks Termux mirrors, switches `sources.list`, and installs missing packages.
+
+## 4. Locate the output
+
+Every run is archived into a dated batch directory, whether it succeeds or not:
+
+```text
+~/rkp_out/
+├── 2026-11-21_0001/
+│   ├── keybox.xml
+│   ├── certs.der
+│   ├── key.der
+│   └── ...
+├── 2026-11-21_0002/
+└── 2026-11-22_0001/   # next day restarts from 0001
+```
+
+Batch numbering only scans the current day. If `_0001` and `_0002` exist, the next run creates `_0003`.
+
+To keep artifacts in place instead of archiving:
+
+```bash
+python3 rkp_toolkit.py all --no-archive
+```
+
+> [!DANGER] The generated `keybox.xml` contains the device private key. Never commit or share it.
+
+## 5. Optional manual deployment
+
+The toolkit never deploys anything itself. If you want to test the keybox with TEESimulator from the command line:
+
+```bash
+cp ~/rkp_out/2026-11-21_0001/keybox.xml /data/adb/teesim/real_keybox.xml
+chmod 600 /data/adb/teesim/real_keybox.xml
+kill $(pidof keystore2)
+```
+
+`keystore2` loads the keybox at startup, so restarting it is mandatory.
+
+## Certificate validity
+
+Issued certificates are short-lived, typically about two weeks. The packaging step prints the leaf validity:
+
+```text
+leaf validity: 2026-11-19 06:03:06 -> 2026-12-02 13:54:37 UTC
+11 days left on this certificate
+```
+
+Re-issue before expiry; there is no renewal mechanism.
+
+## Next steps
+
+<Cards>
+  <Card title="Commands & Setup" href="/en/docs/products/rkp-toolkit/usage" description="All CLI commands, flags, and mirror options." />
+  <Card title="Troubleshooting & Security" href="/en/docs/products/rkp-toolkit/troubleshooting" description="Fix common failures and read the safety notes." />
+</Cards>

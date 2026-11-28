@@ -1,0 +1,21 @@
+---
+id: 5
+title: Templates
+description: Customize the page and email templates shipped with A-Login API.
+authors:
+  - Franklincn
+---
+
+# Templates
+
+Email templates are provided out of the box. Edit them in the `templates` folder.
+
+| File | Description | Do not change |
+|---|---|---|
+| `index.html` | Main page of the API | none |
+| `email_template.html` | Verification email | placeholders named `code` |
+| `welcome_template.html` | Welcome email | placeholders named `password` |
+
+Templates use <code>HTML 4.0</code>.
+
+> Keep the placeholder names intact; the server fills them when sending email.

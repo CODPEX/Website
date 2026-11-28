@@ -1,0 +1,71 @@
+---
+id: 4
+title: 从源码构建
+description: 重新编译 rkp_bridge.jar、运行 Python 工具并校验二进制与源码一致。
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# 从源码构建
+
+仅在想修改代码或自行审计二进制时需要。普通用户使用 Release 包即可，其中已内置 `rkp_bridge.jar`。
+
+## 克隆
+
+```bash
+git clone https://github.com/kanseijo/rkp-toolkit.git
+cd rkp-toolkit
+```
+
+## Python 部分
+
+无需构建，直接运行：
+
+```bash
+python3 rkp_csr.py          # 核心自测
+./issue.sh
+```
+
+## Java 部分
+
+`src/RkpBridge.java` 通过反射调用 RKP HAL，必须编译为 dex 并打包进 jar。
+
+### 依赖
+
+| 依赖 | 用途 |
+|---|---|
+| JDK 8+ | `javac` 编译 `.java` |
+| `android.jar`（或等价 stub） | 编译期 Android API |
+| D8（`r8.jar` 中的 `com.android.tools.r8.D8`） | class → dex |
+| Python 3 | 将 `classes.dex` 打包进 jar |
+
+### 构建
+
+```bash
+sh build.sh <android.jar> [r8.jar]
+```
+
+生成 `rkp_bridge.jar`（约 9.6 KB），覆盖仓库中的副本。
+
+依赖获取：
+
+- `android.jar`：Android SDK `platforms/android-35/android.jar`，或 AOSP 构建产物
+- `r8.jar`：Android SDK `build-tools/*/lib/r8.jar`，或 [r8 releases](https://r8.googlesource.com/r8)
+
+## 验证二进制与源码一致
+
+```bash
+sh build.sh <android.jar> r8.jar
+python3 -c "
+import zipfile
+d = zipfile.ZipFile('rkp_bridge.jar').read('classes.dex')
+for k in [b'generateCertificateRequestV2', b'RKP_CALLER_UID', b'strongbox']:
+    print(k.decode(), 'OK' if k in d else 'MISSING')
+"
+```
+
+使用相同 JDK 与 D8 版本构建时，`classes.dex` **逐字节可复现**（上游已验证）。jar 的 zip 容器会写入时间戳导致文件哈希变化，但 dex 内容一致。

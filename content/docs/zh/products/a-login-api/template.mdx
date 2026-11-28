@@ -1,0 +1,21 @@
+---
+id: 5
+title: 模板
+description: 自定义 A-Login API 自带的页面与邮件模板。
+authors:
+  - Franklincn
+---
+
+# 模板
+
+项目已内置邮件模板，可在 `templates` 目录中修改。
+
+| 文件 | 说明 | 不要修改 |
+|---|---|---|
+| `index.html` | API 主页面 | 无 |
+| `email_template.html` | 验证邮件模板 | 名为 `code` 的占位符 |
+| `welcome_template.html` | 欢迎邮件模板 | 名为 `password` 的占位符 |
+
+模板使用 <code>HTML 4.0</code>。
+
+> 请保留占位符名称，服务端发送邮件时会自动替换。

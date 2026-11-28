@@ -1,0 +1,71 @@
+---
+id: 3
+title: 配置
+description: 在 config.yml 中配置 Redis、SMTP 与应用参数。
+authors:
+  - Franklincn
+---
+
+# 配置
+
+如果按[安装](/zh/docs/products/a-login-api/quickstart)操作后服务仍无法启动，说明还没有配置应用。本页说明 Redis、SMTP 与应用设置。
+
+## Redis
+
+用户数据存储在 Redis 中。
+
+| 名称 | 说明 | 默认值 | 类型 |
+|---|---|---|---|
+| `host` | Redis 服务器地址 | 无 | string |
+| `port` | Redis 端口 | `6379` | int |
+| `db` | Redis 数据库编号 | `0` | int |
+| `username` | Redis 用户名 | `default` | string |
+| `password` | Redis 密码 | 无 | string |
+
+## SMTP
+
+应用通过 SMTP 发送邮件。
+
+| 名称 | 说明 | 默认值 | 类型 |
+|---|---|---|---|
+| `server` | SMTP 服务器地址 | 无 | string |
+| `port` | SMTP 端口 | `687` | int |
+| `username` | SMTP 用户名 | 无 | string |
+| `password` | SMTP 密码 | 无 | string |
+| `send_email` | 发件人地址 | 无 | string |
+
+> 请填写邮件服务商要求的端口（STARTTLS 通常为 `587`）。下方示例中的 `sender_email` 写法同样有效。
+
+## 应用
+
+| 名称 | 说明 | 默认值 | 类型 |
+|---|---|---|---|
+| `host` | 监听地址 | `0.0.0.0` | string |
+| `port` | 监听端口 | `5002` | int |
+| `debug` | 调试模式 | `false` | bool |
+
+## config.yml 示例
+
+```yml
+smtp:
+  server: smtp.example.com
+  port: 587
+  username: your-username
+  password: your-password
+  sender_email: your-id@example.com
+
+redis:
+  host: redis.example.com
+  port: 6379
+  db: 0
+  username: default
+  password: your-redis-password
+  decode_responses: true
+
+app:
+  host: 0.0.0.0
+  port: 5002
+  debug: false
+```
+
+保存后重新启动服务即可。

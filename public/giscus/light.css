@@ -1,0 +1,234 @@
+/* CODPEX · Giscus Light Theme */
+main {
+  --color-prettylights-syntax-comment: #64748b;
+  --color-prettylights-syntax-constant: #4f46e5;
+  --color-prettylights-syntax-entity: #a855f7;
+  --color-prettylights-syntax-keyword: #4f46e5;
+  --color-prettylights-syntax-string: #0f766e;
+  --color-prettylights-syntax-variable: #b45309;
+
+  --color-canvas-default: #ffffff;
+  --color-canvas-subtle: #f6f7fb;
+  --color-canvas-inset: #f1f5f9;
+
+  --color-border-default: #e2e8f0;
+  --color-border-muted: #e2e8f0;
+
+  --color-fg-default: #0f172a;
+  --color-fg-muted: #64748b;
+  --color-fg-subtle: #94a3b8;
+
+  --color-accent-fg: #4f46e5;
+  --color-accent-emphasis: #4f46e5;
+  --color-accent-muted: rgba(79, 70, 229, 0.25);
+  --color-accent-subtle: rgba(79, 70, 229, 0.08);
+
+  --color-btn-text: #334155;
+  --color-btn-bg: #ffffff;
+  --color-btn-border: #e2e8f0;
+  --color-btn-hover-bg: #f8fafc;
+  --color-btn-hover-border: #c7d2fe;
+  --color-btn-active-bg: #eef2ff;
+  --color-btn-active-border: #a5b4fc;
+
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-bg: #4f46e5;
+  --color-btn-primary-border: transparent;
+  --color-btn-primary-hover-bg: #4338ca;
+  --color-btn-primary-hover-border: transparent;
+  --color-btn-primary-selected-bg: #3730a3;
+  --color-btn-primary-disabled-text: rgba(255, 255, 255, 0.7);
+  --color-btn-primary-disabled-bg: #a5b4fc;
+
+  --color-neutral-muted: rgba(100, 116, 139, 0.12);
+  --color-neutral-subtle: rgba(100, 116, 139, 0.06);
+
+  --color-success-fg: #059669;
+
+  color-scheme: light;
+}
+
+main .gsc-comment-box,
+main .gsc-reply-box,
+main .gsc-comment {
+  border-radius: 16px !important;
+  border-color: var(--color-border-default) !important;
+  box-shadow: 0 8px 24px -18px rgba(15, 23, 42, 0.25);
+}
+
+main .gsc-comment-box-tabs {
+  border-radius: 12px !important;
+  background: var(--color-canvas-subtle) !important;
+  padding: 4px !important;
+}
+
+main .gsc-comment-box-tabs a {
+  border-radius: 9px !important;
+  border: none !important;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+main .gsc-comment-box-tabs a[aria-selected='true'],
+main .gsc-comment-box-tabs a.active {
+  background: #ffffff !important;
+  color: var(--color-accent-fg) !important;
+  box-shadow: 0 2px 8px -4px rgba(15, 23, 42, 0.25);
+}
+
+main .gsc-comment-box-write textarea,
+main .gsc-reply-box textarea,
+main .gsc-comment-box-write input,
+main .gsc-reply-box input {
+  border-radius: 12px !important;
+  border-color: var(--color-border-default) !important;
+  background: var(--color-canvas-default) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main .gsc-comment-box-write textarea:focus,
+main .gsc-reply-box textarea:focus {
+  border-color: #a5b4fc !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* 主按钮：渐变 + 悬浮上浮 */
+main button.btn-primary,
+main .gsc-reply-box button[type='submit'],
+main .gsc-comment-box button[type='submit'] {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #a855f7 100%) !important;
+  border: none !important;
+  border-radius: 11px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  padding: 8px 18px !important;
+  box-shadow: 0 10px 22px -12px rgba(79, 70, 229, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease !important;
+}
+
+main button.btn-primary:hover,
+main .gsc-reply-box button[type='submit']:hover,
+main .gsc-comment-box button[type='submit']:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow: 0 14px 26px -12px rgba(124, 58, 237, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+main button.btn-primary:active,
+main .gsc-reply-box button[type='submit']:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+main button.btn-primary:disabled {
+  opacity: 0.55;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* 普通按钮：圆角描边 + hover 高亮 */
+main button.btn:not(.btn-primary),
+main .gsc-comment-box button:not(.btn-primary),
+main .gsc-reply-box button:not(.btn-primary) {
+  border-radius: 9px !important;
+  border-color: var(--color-border-default) !important;
+  font-weight: 500;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+main button.btn:not(.btn-primary):hover,
+main .gsc-comment-box button:not(.btn-primary):hover {
+  border-color: #a5b4fc !important;
+  background: #eef2ff !important;
+  color: var(--color-accent-fg) !important;
+}
+
+/* 登录按钮 */
+main .gsc-comment-box .btn-primary.btn-block {
+  border-radius: 12px !important;
+  padding: 10px 20px !important;
+}
+
+/* 表情反馈按钮：胶囊化 */
+main .gsc-reactions-button,
+main .gsc-reactions-count,
+main .gsc-social-reaction-summary-item {
+  border-radius: 999px !important;
+  border-color: var(--color-border-default) !important;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+main .gsc-reactions-button:hover,
+main .gsc-social-reaction-summary-item:hover {
+  border-color: #a5b4fc !important;
+  background: #eef2ff !important;
+}
+
+/* 评论主体 */
+main .gsc-comment-content,
+main .gsc-comment-header {
+  background: transparent !important;
+}
+
+main .gsc-comment-author {
+  font-weight: 700;
+}
+
+main .markdown {
+  line-height: 1.75;
+}
+
+main .gsc-comment-content a {
+  color: var(--color-accent-fg);
+}
+
+/* 评论卡片：悬浮描边高亮 */
+main .gsc-comment {
+  background: var(--color-canvas-default) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main .gsc-comment:hover {
+  border-color: #c7d2fe !important;
+  box-shadow: 0 14px 30px -22px rgba(79, 70, 229, 0.4);
+}
+
+main .gsc-comment-header {
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+main .gsc-comment-author-avatar img,
+main .gsc-comment-header img {
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.16);
+}
+
+main .gsc-reactions {
+  margin-bottom: 14px;
+}
+
+main .gsc-comment-box-tabs a:hover {
+  color: var(--color-accent-fg) !important;
+}
+
+main .gsc-comment-box-bottom,
+main .gsc-comment-box-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+main .markdown pre {
+  border-radius: 12px !important;
+  border-color: var(--color-border-default) !important;
+}
+
+main .markdown blockquote {
+  border-left: 3px solid #a5b4fc !important;
+  border-radius: 0 8px 8px 0;
+  background: #f8fafc;
+}

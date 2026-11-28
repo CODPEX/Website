@@ -1,0 +1,103 @@
+---
+id: 6
+title: 故障排查与安全
+description: 解决 RKP Toolkit 常见失败、收集诊断信息并了解安全注意事项。
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# 故障排查与安全
+
+## 错误对照
+
+| 症状 | 原因 | 处理 |
+|---|---|---|
+| `no RKP backend found` | 设备无 RKP HAL（A13 及更早常见） | 设备不支持 |
+| `generateCertificateRequestV2 is unimplemented` | 固件仍在旧 HAL | 见下方重刷说明 |
+| `Failure in CSR Generation (code 17)` | 厂商私有 TEE 错误 | 通常是重刷过的设备 |
+| `PermissionError: ... key.der` | 私钥属 root 所有 | 见文件所有权 |
+| `sh: 0: Can't open issue.sh` | 目录不对 | `ls ~/rkp-toolkit/issue.sh` |
+| `index update failed` | 镜像不可达 | `sh setup.sh --global` 或 `--repair` |
+
+## 文件所有权
+
+`rkp_bridge.jar` 以 root 运行（`su -c`），其创建的 `key.der`、`out.bin` 默认属 `root:root`、权限 `0600`，Termux 用户不可读，导致打包失败：
+
+```text
+PermissionError: [Errno 13] Permission denied: '.../key.der'
+```
+
+两端都做了处理：
+
+1. **桥接程序交还文件**：调用者的 uid/gid 通过 `RKP_CALLER_UID` / `RKP_CALLER_GID` 传入，桥接写入后 chown。
+2. **Python 兜底**：`_ensure_readable()` 读取前检查，依次尝试 `chown` → `chmod` → 拷贝。
+
+手动修复：
+
+```bash
+su -c "chown $(id -u):$(id -g) ~/rkp_out/*/key.der ~/rkp_out/*/out.bin"
+```
+
+## 收集诊断信息
+
+失败时工具会在批次目录写入 `debug.txt`，包含桥接 stdout、Java 堆栈、设备启动状态与固件版本。报告问题时请附该文件而非截图。
+
+## 重刷 TEE 常会破坏 RKP
+
+**如果设备的 TEE 被重刷过——或单独刷了 vendor 分区、安装了跨版本固件、使用移植 ROM——RKP 签发极可能失败，且没有任何软件层绕过方案。**
+
+原因：RKP CSR 必须在 TEE 内生成，并嵌入 **DICE 证书链**，用于证明各启动阶段的完整性。vendor 分区或 TEE 被改动后，证书链不再匹配，厂商 HAL 会拒绝，返回类似 `Failure in CSR Generation (code 17)` 的私有错误。
+
+该故障模式的症状：
+
+- `generateCertificateRequestV2 is unimplemented`（固件停留在旧 HAL）
+- 两种 EEK 曲线返回**完全相同**的厂商私有错误码
+- 即使 `verifiedbootstate=green`、`flash.locked=1` 仍失败
+- `ro.build.version.release` 与 `ro.vendor.build.version.release` **不一致**
+
+**这不是本工具的缺陷。** 只要任一未修改设备成功，工具链就没问题，问题在设备固件。
+
+自检设备：
+
+```bash
+su -c "getprop ro.build.version.release"          # system
+su -c "getprop ro.vendor.build.version.release"   # vendor
+su -c "getprop ro.boot.verifiedbootstate"
+su -c "getprop ro.boot.flash.locked"
+```
+
+若两行版本不一致，基本会失败，不必浪费时间。
+
+## 没有 RKP HAL 的设备
+
+Android 13 及更早的设备可能完全没有 `IRemotelyProvisionedComponent` HAL（Android 13 CDD 并不强制要求）。自检会报告 `no RKP backend found`。
+
+## 本工具不做什么
+
+- **不伪造证书**：CSR 由设备自身 TEE 签名，工具只负责转交与打包
+- **不绕过验证**：Google 服务端的设备检查依然生效
+- **不能修复固件问题**：见上方重刷说明
+
+## 安全提示
+
+- 生成的 `keybox.xml` 含**设备私钥**，泄露会带来安全风险，切勿提交到仓库或分享
+- 所有命令都需要 **root**，`su -c` 操作会触及系统分区并重启 `keystore2`，操作不当可能导致设备无法正常启动或密钥库异常
+- 重刷 TEE / vendor 分区会不可逆地破坏 RKP 能力，请自行评估后再操作
+
+## 许可证与来源
+
+项目采用 **MIT**（见 `LICENSE`）。`rkp_csr.py` 源自 Apache-2.0 许可的 AOSP 代码，署名见 `NOTICE`，完整许可文本见 `LICENSES/Apache-2.0.txt`。
+
+| 文件 | 来源 | 许可 |
+|---|---|---|
+| `rkp_csr.py` | AOSP `rkp_factory_extraction_tool.cpp:96-115` 的 Python 翻译 | Apache-2.0 |
+| `rkp_toolkit.py` | 独立实现，协议依 AOSP AIDL | MIT |
+| `src/RkpBridge.java` | 独立实现 | MIT |
+| `src/RkpProbe.java` | 独立实现 | MIT |
+| `issue.sh`、`setup.sh`、`build.sh` | 独立实现 | MIT |
+
+未使用任何 OhMyKeymint 代码；其 GLA v4 为 copyleft 且限制商用，与本项目 MIT 不兼容。

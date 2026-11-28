@@ -1,0 +1,93 @@
+---
+id: 4
+title: API Requests
+description: Verification code, login, and response reference for A-Login API.
+authors:
+  - Franklincn
+---
+
+# API Requests
+
+All endpoints are served from:
+
+```text
+http://<your-ip>:<your-port>
+```
+
+The default port is `5002`. Request bodies must be JSON.
+
+## Send verification code
+
+```http
+POST /send_verification_code
+```
+
+Request body:
+
+```json
+{
+  "email": "your@email.com"
+}
+```
+
+Responses:
+
+| Status | `success` | `message` | Meaning |
+|---|---|---|---|
+| 200 | `true` | `Verification code has been sent to your email` | Code delivered |
+| 400 | `false` | `Request body empty or invalid JSON` | Malformed request |
+| 400 | `false` | `Invalid email format` | Email failed validation |
+| 400 | `false` | `Verification code sending failed` | SMTP send error |
+| 500 | `false` | `Email service not initialized` | SMTP not configured |
+| 500 | `false` | `Verification code storage failed` | Redis write failed |
+| 500 | `false` | `Server error: <message>` | Unexpected error, includes `traceback` |
+
+## Login
+
+```http
+POST /login
+```
+
+### Option A: verification code
+
+```json
+{
+  "email": "your@email.com",
+  "code": "code-from-email"
+}
+```
+
+### Option B: password
+
+```json
+{
+  "email": "your@email.com",
+  "password": "your-password"
+}
+```
+
+### Success responses
+
+New accounts are created automatically on first login with a verification code.
+
+| Status | `message` | `data` |
+|---|---|---|
+| 200 | `Account created successfully` | `{ "username": "<generated>", "uuid": "<numeric-id>" }` |
+| 200 | `Login successful` | `{ "username": "<name>", "uuid": "<id>" }` |
+
+### Error responses
+
+| Status | `message` | Notes |
+|---|---|---|
+| 400 | `Request content must be JSON format` | Returns `content_type` |
+| 400 | `Failed to parse JSON data` | Returns `raw_data` |
+| 400 | `Email address is required` | Missing field |
+| 400 | `Invalid email format` | — |
+| 400 | `User does not exist` | Password login on unknown account |
+| 400 | `Password mismatch` | Returns `hash_match: false` |
+| 400 | `Verification code mismatch` | Returns `stored_code` |
+| 400 | `Either password or verification code required` | Returns `provided_fields` |
+| 503 | `Authentication service unavailable` | `error_code: REDIS_CONNECTION_FAILED` |
+| 500 | `Internal server error` | `error_code: REDIS_OPERATION_FAILED` or `traceback` |
+
+> `uuid` is a sequential numeric ID, not a UUID string. Keep it for later user lookups.

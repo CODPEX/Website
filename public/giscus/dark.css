@@ -1,0 +1,240 @@
+/* CODPEX · Giscus Dark Theme */
+main {
+  --color-prettylights-syntax-comment: #94a3b8;
+  --color-prettylights-syntax-constant: #818cf8;
+  --color-prettylights-syntax-entity: #c084fc;
+  --color-prettylights-syntax-keyword: #818cf8;
+  --color-prettylights-syntax-string: #5eead4;
+  --color-prettylights-syntax-variable: #fbbf24;
+
+  --color-canvas-default: #0b0d16;
+  --color-canvas-subtle: #12141f;
+  --color-canvas-inset: #0a0c14;
+
+  --color-border-default: rgba(255, 255, 255, 0.1);
+  --color-border-muted: rgba(255, 255, 255, 0.08);
+
+  --color-fg-default: #e2e8f0;
+  --color-fg-muted: #94a3b8;
+  --color-fg-subtle: #64748b;
+
+  --color-accent-fg: #a5b4fc;
+  --color-accent-emphasis: #818cf8;
+  --color-accent-muted: rgba(129, 140, 248, 0.35);
+  --color-accent-subtle: rgba(129, 140, 248, 0.12);
+
+  --color-btn-text: #cbd5e1;
+  --color-btn-bg: #12141f;
+  --color-btn-border: rgba(255, 255, 255, 0.1);
+  --color-btn-hover-bg: #1a1d2b;
+  --color-btn-hover-border: rgba(165, 180, 252, 0.5);
+  --color-btn-active-bg: #242838;
+  --color-btn-active-border: rgba(165, 180, 252, 0.7);
+
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-bg: #6366f1;
+  --color-btn-primary-border: transparent;
+  --color-btn-primary-hover-bg: #4f46e5;
+  --color-btn-primary-hover-border: transparent;
+  --color-btn-primary-selected-bg: #4338ca;
+  --color-btn-primary-disabled-text: rgba(255, 255, 255, 0.6);
+  --color-btn-primary-disabled-bg: #3730a3;
+
+  --color-neutral-muted: rgba(148, 163, 184, 0.16);
+  --color-neutral-subtle: rgba(148, 163, 184, 0.08);
+
+  --color-success-fg: #34d399;
+
+  color-scheme: dark;
+}
+
+main .gsc-comment-box,
+main .gsc-reply-box,
+main .gsc-comment {
+  border-radius: 16px !important;
+  border-color: var(--color-border-default) !important;
+  box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.9);
+}
+
+main .gsc-comment-box-tabs {
+  border-radius: 12px !important;
+  background: var(--color-canvas-inset) !important;
+  padding: 4px !important;
+}
+
+main .gsc-comment-box-tabs a {
+  border-radius: 9px !important;
+  border: none !important;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+main .gsc-comment-box-tabs a[aria-selected='true'],
+main .gsc-comment-box-tabs a.active {
+  background: #1a1d2b !important;
+  color: var(--color-accent-fg) !important;
+  box-shadow: 0 2px 10px -4px rgba(0, 0, 0, 0.8);
+}
+
+main .gsc-comment-box-write textarea,
+main .gsc-reply-box textarea,
+main .gsc-comment-box-write input,
+main .gsc-reply-box input {
+  border-radius: 12px !important;
+  border-color: var(--color-border-default) !important;
+  background: var(--color-canvas-inset) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main .gsc-comment-box-write textarea:focus,
+main .gsc-reply-box textarea:focus {
+  border-color: rgba(129, 140, 248, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18) !important;
+}
+
+/* 主按钮：渐变 + 悬浮上浮 */
+main button.btn-primary,
+main .gsc-reply-box button[type='submit'],
+main .gsc-comment-box button[type='submit'] {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #a855f7 100%) !important;
+  border: none !important;
+  border-radius: 11px !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  padding: 8px 18px !important;
+  box-shadow: 0 10px 24px -12px rgba(124, 58, 237, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease !important;
+}
+
+main button.btn-primary:hover,
+main .gsc-reply-box button[type='submit']:hover,
+main .gsc-comment-box button[type='submit']:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 16px 30px -12px rgba(168, 85, 247, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+main button.btn-primary:active,
+main .gsc-reply-box button[type='submit']:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+main button.btn-primary:disabled {
+  opacity: 0.5;
+  transform: none;
+  cursor: not-allowed;
+}
+
+/* 普通按钮：圆角描边 + hover 高亮 */
+main button.btn:not(.btn-primary),
+main .gsc-comment-box button:not(.btn-primary),
+main .gsc-reply-box button:not(.btn-primary) {
+  border-radius: 9px !important;
+  border-color: var(--color-border-default) !important;
+  font-weight: 500;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+main button.btn:not(.btn-primary):hover,
+main .gsc-comment-box button:not(.btn-primary):hover {
+  border-color: rgba(165, 180, 252, 0.5) !important;
+  background: #1a1d2b !important;
+  color: var(--color-accent-fg) !important;
+}
+
+/* 登录按钮 */
+main .gsc-comment-box .btn-primary.btn-block {
+  border-radius: 12px !important;
+  padding: 10px 20px !important;
+}
+
+/* 表情反馈按钮：胶囊化 */
+main .gsc-reactions-button,
+main .gsc-reactions-count,
+main .gsc-social-reaction-summary-item {
+  border-radius: 999px !important;
+  border-color: var(--color-border-default) !important;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+main .gsc-reactions-button:hover,
+main .gsc-social-reaction-summary-item:hover {
+  border-color: rgba(165, 180, 252, 0.5) !important;
+  background: #1a1d2b !important;
+}
+
+/* 评论主体 */
+main .gsc-comment-content,
+main .gsc-comment-header {
+  background: transparent !important;
+}
+
+main .gsc-comment-author {
+  font-weight: 700;
+}
+
+main .markdown {
+  line-height: 1.75;
+}
+
+main .gsc-comment-content a {
+  color: var(--color-accent-fg);
+}
+
+main .gsc-comment-content code {
+  background: var(--color-canvas-inset);
+  border-radius: 6px;
+  padding: 1px 5px;
+}
+
+/* 评论卡片：悬浮描边高亮 */
+main .gsc-comment {
+  background: var(--color-canvas-default) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+main .gsc-comment:hover {
+  border-color: rgba(165, 180, 252, 0.4) !important;
+  box-shadow: 0 16px 32px -22px rgba(0, 0, 0, 0.9);
+}
+
+main .gsc-comment-header {
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+main .gsc-comment-author-avatar img,
+main .gsc-comment-header img {
+  border-radius: 50% !important;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2);
+}
+
+main .gsc-reactions {
+  margin-bottom: 14px;
+}
+
+main .gsc-comment-box-tabs a:hover {
+  color: var(--color-accent-fg) !important;
+}
+
+main .gsc-comment-box-bottom,
+main .gsc-comment-box-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+main .markdown pre {
+  border-radius: 12px !important;
+  border-color: var(--color-border-default) !important;
+}
+
+main .markdown blockquote {
+  border-left: 3px solid #818cf8 !important;
+  border-radius: 0 8px 8px 0;
+  background: var(--color-canvas-subtle);
+}

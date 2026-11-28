@@ -1,0 +1,134 @@
+---
+id: 5
+title: 工作原理
+description: 协议流程、Android 版本差异、CSR 组装与 keybox 的两项硬性要求。
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# 工作原理
+
+## 协议流程
+
+```text
+A. fetchEekChain      POST /v1:fetchEekChain
+                      → challenge + 端到端加密密钥链
+B. TEE 生成 CSR       HAL generateCertificateRequest(V2)(...)
+                      → 由设备 TEE 签名的 CSR
+C. signCertificates   POST /v1:signCertificates?challenge=...
+                      → Google 返回证书链
+D. 打包 keybox.xml    叶子证书在前、SEC1 私钥
+```
+
+端点使用 gRPC 冒号语法：`/v1:fetchEekChain` 返回 200，而 `/v1/fetchEekChain` 返回 404。
+
+## Android 版本差异
+
+两条路径差异很大，工具会自动选择。
+
+### RKP 后端所在位置
+
+| | Android 13 | Android 14+ |
+|---|---|---|
+| 后端 | 内置于 `keystore2` | `rkpdapp` APK |
+| 服务 | `android.security.remoteprovisioning` | `/apex/com.android.rkpd*/priv-app/*` |
+| 独立 APK | **无** | 有 |
+
+Android 13 上没有包含 `IRemotelyProvisionedComponent` 的 APK，所以按 APK 搜索在 A13 上永远失败；HAL 层服务名在两版本中相同，因此签发流程本身无需改变。
+
+### 自检顺序
+
+按顺序尝试，任一命中即通过：
+
+1. `/apex/com.android.rkpd*/priv-app/*/*.apk`（A14+）
+2. `android.security.remoteprovisioning` 服务（A13）
+3. HAL 服务本身（`service check .../default`）
+
+`service` 使用绝对路径调用，因为 `su -c` 的 shell 通常 `PATH` 极小。也会检查 `vndservice`，因为厂商 AIDL HAL 可能注册在 `/dev/vndbinder`。
+
+### HAL 版本与方法映射
+
+| | Android 12/13（HAL v1/v2） | Android 14+（HAL v3） |
+|---|---|---|
+| HAL 方法 | `generateCertificateRequest` | `generateCertificateRequestV2` |
+| EEK | **必需** | 不需要 |
+| CSR 来源 | HAL 返回三段，**客户端组装** | HAL 返回完整 CSR |
+| CSR 结构 | `[[DeviceInfo, {}], challenge, ProtectedData, MacedKeys]` | `AuthenticatedRequest<CsrPayload>` |
+| 版本字段 | 无 | 有（`1`） |
+
+工具不完全信任版本号：方法存在时先试 `generateCertificateRequestV2`，再回退到 `generateCertificateRequest` 并尝试两种 EEK 曲线。
+
+### Android 13 的 CSR 组装
+
+HAL 返回**三段独立数据**：
+
+```text
+mac           : HMAC-256(EK_mac, KeysToMacStructure)   32 bytes
+deviceInfo    : CBOR 编码的 VerifiedDeviceInfo
+protectedData : BCC 的 COSE_Encrypt
+```
+
+`rkp_csr.py` 将其组装为 Google 期望的 4 元素数组，对应 AOSP `composeCertificateRequest()`：
+
+```text
+[ [VerifiedDeviceInfo, {}], challenge, ProtectedData, MacedKeys ]
+```
+
+容易出错的要点：
+
+- DeviceInfo 对是 `[verified, {}]`，**不是** `[{}, verified]`
+- `MacedKeys` 的 payload 为 nil、protected header 为空 bstr、tag 为 HAL 返回的 MAC
+- **没有**顶层版本字段；版本字段只存在于 v3
+
+AOSP 的 `.add(std::vector<uint8_t>(0))` 产生的是空 bstr（`0x40`），**不是**空数组（`0x80`）。
+
+探测设备：
+
+```bash
+python3 rkp_toolkit.py probe
+```
+
+## keybox 的两项硬性要求
+
+### 1. 私钥必须是 SEC1
+
+```xml
+<PrivateKey format="pem">
+  -----BEGIN EC PRIVATE KEY-----   <!-- 必须是 SEC1 -->
+```
+
+TEESimulator 用 BoringSSL 的 `EC_KEY_parse_private_key` 解析，只接受 **SEC1（RFC 5915）**。提供 **PKCS#8**（`BEGIN PRIVATE KEY`）会得到：
+
+```text
+DECODE_ERROR, ec_asn1.cc:48
+failing DeviceGenerateKey request with error
+```
+
+应用报 `-30000`。
+
+### 2. 证书链必须叶子在前
+
+```xml
+<CertificateChain>
+  <NumberOfCertificates>4</NumberOfCertificates>
+  <Certificate type="leaf">…</Certificate>   <!-- 叶子持有私钥 -->
+  <Certificate type="intermediate">…</Certificate>
+  <Certificate type="intermediate">…</Certificate>
+  <Certificate type="root">…</Certificate>   <!-- root 最后 -->
+</CertificateChain>
+```
+
+把 root 放最前会得到 `BAD_SIGNATURE`。
+
+## 已知限制
+
+- **厂商差异**：在 AOSP 的 Rust 参考实现中，v1/v2 的 `generate_cert_req()` 只是 `Unimplemented` 占位；真实实现均由 SoC 厂商编写，行为可能有差异。
+- **EEK 曲线**：会优先使用报告的 `supportedEekCurve`，但同时尝试两种曲线；厂商报告错误时结果仍可能有差异。
+- **必须真机**：CSR 必须由设备 TEE 签名，无法在服务器上模拟。
+- **证书短期有效**：约两周，到期需重新签发。
+- **需要 root**：访问 RKP HAL 必须 root。
+- **硬编码 MAC 密钥**：`MacedPublicKey` 使用公开的测试 MAC 密钥，这也是无需持有设备密钥即可构建 CSR 的原因。

@@ -1,0 +1,71 @@
+---
+id: 3
+title: Configuration
+description: Configure Redis, SMTP, and application settings in config.yml.
+authors:
+  - Franklincn
+---
+
+# Configuration
+
+If you followed [Install](/en/docs/products/a-login-api/quickstart) and the service still fails, the application config has not been set up. This page covers Redis, SMTP, and application settings.
+
+## Redis
+
+User data is stored in Redis.
+
+| Name | Description | Default | Type |
+|---|---|---|---|
+| `host` | Redis server address | none | string |
+| `port` | Redis server port | `6379` | int |
+| `db` | Redis database number | `0` | int |
+| `username` | Redis username | `default` | string |
+| `password` | Redis password | none | string |
+
+## SMTP
+
+The application sends email over SMTP.
+
+| Name | Description | Default | Type |
+|---|---|---|---|
+| `server` | SMTP server address | none | string |
+| `port` | SMTP server port | `687` | int |
+| `username` | SMTP username | none | string |
+| `password` | SMTP password | none | string |
+| `send_email` | Sender address | none | string |
+
+> Use the port your mail provider requires (usually `587` for STARTTLS). The `sender_email` key in the example below also works.
+
+## Application
+
+| Name | Description | Default | Type |
+|---|---|---|---|
+| `host` | Listen address | `0.0.0.0` | string |
+| `port` | Listen port | `5002` | int |
+| `debug` | Debug mode | `false` | bool |
+
+## config.yml example
+
+```yml
+smtp:
+  server: smtp.example.com
+  port: 587
+  username: your-username
+  password: your-password
+  sender_email: your-id@example.com
+
+redis:
+  host: redis.example.com
+  port: 6379
+  db: 0
+  username: default
+  password: your-redis-password
+  decode_responses: true
+
+app:
+  host: 0.0.0.0
+  port: 5002
+  debug: false
+```
+
+Save the file, then start the server again.

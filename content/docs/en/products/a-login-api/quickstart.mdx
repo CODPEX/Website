@@ -1,0 +1,73 @@
+---
+id: 2
+title: Install
+description: Install Python 3.11.3, clone A-Login API, and start the server on Windows, Linux, or macOS.
+authors:
+  - Franklincn
+---
+
+# Install
+
+You need a server or a PC, plus **Git** installed before starting.
+
+> **Git is required.** Download it from [git-scm.com](https://git-scm.com/downloads), or run `sudo apt install git` on Linux.
+
+## Windows
+
+1. Download and install [Python 3.11.3](https://www.python.org/downloads/release/python-3113/)
+2. Clone the repository:
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. Run `run.bat` to start the server.
+4. Done. Continue with [Configuration](/en/docs/products/a-login-api/config) before using the API.
+
+## Linux
+
+1. Install Python 3.11.3, or use the system package:
+
+```bash
+sudo apt update
+sudo apt install python3
+```
+
+2. Clone the repository:
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. Start the server:
+
+```bash
+sh run.sh
+```
+
+4. Done.
+
+## macOS
+
+> macOS is not officially tested. If you find mistakes, please open an issue upstream.
+
+1. Download and install [Python 3.11.3](https://www.python.org/downloads/release/python-3113/)
+2. Clone the repository:
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. Install dependencies and start the server:
+
+```bash
+pip3 install -r requirements.txt
+python3 main.py
+```
+
+## After installation
+
+The server will not work correctly until `config.yml` is filled in. See [Configuration](/en/docs/products/a-login-api/config).

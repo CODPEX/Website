@@ -1,0 +1,45 @@
+---
+id: 1
+title: Overview
+description: A Python Flask authentication and user management API, open-sourced by CODPEX.
+authors:
+  - Franklincn
+---
+
+# Overview
+
+Aurora.LoginAPI (A-Login API) is a **Python** service built on **Flask**. It started as an internal tool for our team and was later open-sourced.
+
+It manages user accounts and authentication. More APIs will be added in the future.
+
+## Highlights
+
+- Login with an email verification code
+- Login with email and password
+- User data stored in Redis
+- Verification and welcome emails sent over SMTP
+- Editable HTML email and page templates
+
+## Requirements
+
+| Requirement | Notes |
+|---|---|
+| Git | Used to clone the repository |
+| Python 3.11.3 | The tested runtime version |
+| Redis | Stores user data and verification codes |
+| SMTP server | Sends verification and welcome emails |
+
+## Source code
+
+<Cards>
+  <Card title="GitHub Repository" href="https://github.com/CODPEX/ALoginAPI" description="CODPEX/ALoginAPI — source code and issues." />
+</Cards>
+
+## Next steps
+
+<Cards>
+  <Card title="Install" href="/en/docs/products/a-login-api/quickstart" description="Set up Python, clone the repository, and start the server." />
+  <Card title="Configuration" href="/en/docs/products/a-login-api/config" description="Configure Redis, SMTP, and the application itself." />
+  <Card title="API Requests" href="/en/docs/products/a-login-api/api-reference" description="Verification code, login, and response reference." />
+  <Card title="Templates" href="/en/docs/products/a-login-api/template" description="Customize the page and email templates." />
+</Cards>

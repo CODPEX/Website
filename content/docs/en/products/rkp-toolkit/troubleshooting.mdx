@@ -1,0 +1,103 @@
+---
+id: 6
+title: Troubleshooting & Security
+description: Fix common RKP Toolkit failures, collect diagnostics, and understand the security warnings.
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# Troubleshooting & Security
+
+## Error reference
+
+| Symptom | Cause | Action |
+|---|---|---|
+| `no RKP backend found` | Device has no RKP HAL (common on Android 13 and older) | Unsupported device |
+| `generateCertificateRequestV2 is unimplemented` | Firmware still uses an older HAL | See the reflash notes below |
+| `Failure in CSR Generation (code 17)` | Vendor TEE returns a private error | Usually a modified device |
+| `PermissionError: ... key.der` | Private key owned by root | See file ownership |
+| `sh: 0: Can't open issue.sh` | Wrong directory | `ls ~/rkp-toolkit/issue.sh` |
+| `index update failed` | Mirror unreachable | `sh setup.sh --global` or `--repair` |
+
+## File ownership
+
+`rkp_bridge.jar` runs as root (`su -c`), so the `key.der` and `out.bin` it creates are owned by `root:root` with mode `0600`. Termux users cannot read them, and packaging fails:
+
+```text
+PermissionError: [Errno 13] Permission denied: '.../key.der'
+```
+
+Both sides handle it:
+
+1. **The bridge returns the files**: the caller's uid/gid are passed via `RKP_CALLER_UID` / `RKP_CALLER_GID`, and the bridge chowns after writing.
+2. **Python fallback**: `_ensure_readable()` checks before reading and tries `chown` → `chmod` → copy in order.
+
+Manual fix:
+
+```bash
+su -c "chown $(id -u):$(id -g) ~/rkp_out/*/key.der ~/rkp_out/*/out.bin"
+```
+
+## Collect diagnostics
+
+On failure the tool writes `debug.txt` into the batch directory, containing bridge stdout, Java stack traces, device boot state, and firmware versions. Attach that file instead of screenshots when reporting issues.
+
+## Reflashed TEE often breaks RKP
+
+**If the device's TEE was reflashed — or the vendor partition was flashed separately, cross-version firmware is installed, or a ported ROM is used — RKP issuance will very likely fail, with no software workaround.**
+
+RKP CSRs must be generated inside the TEE and embed the **DICE certificate chain** that proves each boot stage. After modifying the vendor partition or TEE, the chain no longer matches, the vendor HAL rejects the request, and returns private errors such as `Failure in CSR Generation (code 17)`.
+
+Symptoms of this failure mode:
+
+- `generateCertificateRequestV2 is unimplemented` (firmware stuck on an old HAL)
+- Both EEK curves return the **exact same** vendor private error code
+- Failure persists even with `verifiedbootstate=green` and `flash.locked=1`
+- `ro.build.version.release` and `ro.vendor.build.version.release` **do not match**
+
+**This is not a defect of the toolkit.** As long as one unmodified device works, the toolchain is fine.
+
+Check the device:
+
+```bash
+su -c "getprop ro.build.version.release"          # system
+su -c "getprop ro.vendor.build.version.release"   # vendor
+su -c "getprop ro.boot.verifiedbootstate"
+su -c "getprop ro.boot.flash.locked"
+```
+
+Mismatched versions almost certainly mean failure; do not waste time.
+
+## Devices without an RKP HAL
+
+Android 13 and older devices may have no `IRemotelyProvisionedComponent` HAL at all; the Android 13 CDD does not require it. The self-check reports `no RKP backend found`.
+
+## What this tool does not do
+
+- **Does not forge certificates**: the CSR is signed by the device TEE; the tool only forwards and packages it
+- **Does not bypass verification**: Google's server-side device checks still apply
+- **Cannot fix firmware problems**: see the reflash notes
+
+## Security notes
+
+- The generated `keybox.xml` contains the **device private key**. Never commit it to a repository or share it.
+- All commands require **root**; `su -c` operations touch system partitions and restart `keystore2`. A mistake can leave the device unable to boot normally or break the keystore.
+- Reflashing the TEE or vendor partition irreversibly breaks RKP support. Evaluate carefully before proceeding.
+
+## License and sources
+
+The project is **MIT** (see `LICENSE`). `rkp_csr.py` is derived from Apache-2.0 AOSP code; attribution is in `NOTICE` and the full text in `LICENSES/Apache-2.0.txt`.
+
+| File | Origin | License |
+|---|---|---|
+| `rkp_csr.py` | Python translation of AOSP `rkp_factory_extraction_tool.cpp:96-115` | Apache-2.0 |
+| `rkp_toolkit.py` | Independent implementation, protocol per AOSP AIDL | MIT |
+| `src/RkpBridge.java` | Independent implementation | MIT |
+| `src/RkpProbe.java` | Independent implementation | MIT |
+| `issue.sh`, `setup.sh`, `build.sh` | Independent implementation | MIT |
+
+No OhMyKeymint code is used; its GLA v4 license is copyleft and non-commercial, incompatible with MIT.

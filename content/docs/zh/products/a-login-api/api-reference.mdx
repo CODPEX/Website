@@ -1,0 +1,93 @@
+---
+id: 4
+title: API 请求
+description: A-Login API 的验证码、登录接口与响应参考。
+authors:
+  - Franklincn
+---
+
+# API 请求
+
+所有接口的基础地址：
+
+```text
+http://<your-ip>:<your-port>
+```
+
+默认端口为 `5002`。请求体必须是 JSON。
+
+## 发送验证码
+
+```http
+POST /send_verification_code
+```
+
+请求体：
+
+```json
+{
+  "email": "your@email.com"
+}
+```
+
+响应：
+
+| 状态码 | `success` | `message` | 含义 |
+|---|---|---|---|
+| 200 | `true` | `Verification code has been sent to your email` | 验证码已发送 |
+| 400 | `false` | `Request body empty or invalid JSON` | 请求格式错误 |
+| 400 | `false` | `Invalid email format` | 邮箱格式不合法 |
+| 400 | `false` | `Verification code sending failed` | 邮件发送失败 |
+| 500 | `false` | `Email service not initialized` | SMTP 未配置 |
+| 500 | `false` | `Verification code storage failed` | Redis 写入失败 |
+| 500 | `false` | `Server error: <message>` | 未预期错误，含 `traceback` |
+
+## 登录
+
+```http
+POST /login
+```
+
+### 方式 A：验证码
+
+```json
+{
+  "email": "your@email.com",
+  "code": "邮箱收到的验证码"
+}
+```
+
+### 方式 B：密码
+
+```json
+{
+  "email": "your@email.com",
+  "password": "your-password"
+}
+```
+
+### 成功响应
+
+首次使用验证码登录会自动创建账号。
+
+| 状态码 | `message` | `data` |
+|---|---|---|
+| 200 | `Account created successfully` | `{ "username": "<自动生成>", "uuid": "<数字 ID>" }` |
+| 200 | `Login successful` | `{ "username": "<用户名>", "uuid": "<用户 ID>" }` |
+
+### 错误响应
+
+| 状态码 | `message` | 说明 |
+|---|---|---|
+| 400 | `Request content must be JSON format` | 返回 `content_type` |
+| 400 | `Failed to parse JSON data` | 返回 `raw_data` |
+| 400 | `Email address is required` | 缺少邮箱字段 |
+| 400 | `Invalid email format` | 邮箱格式错误 |
+| 400 | `User does not exist` | 密码登录时用户不存在 |
+| 400 | `Password mismatch` | 返回 `hash_match: false` |
+| 400 | `Verification code mismatch` | 返回 `stored_code` |
+| 400 | `Either password or verification code required` | 返回 `provided_fields` |
+| 503 | `Authentication service unavailable` | `error_code: REDIS_CONNECTION_FAILED` |
+| 500 | `Internal server error` | `error_code: REDIS_OPERATION_FAILED` 或 `traceback` |
+
+> `uuid` 是递增的数字 ID，不是 UUID 字符串，请保存好以便后续查询用户。

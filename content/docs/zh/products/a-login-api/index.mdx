@@ -1,0 +1,45 @@
+---
+id: 1
+title: 概览
+description: 由 CODPEX 开源的 Python Flask 身份验证与用户管理 API。
+authors:
+  - Franklincn
+---
+
+# 概览
+
+Aurora.LoginAPI（A-Login API）是一个基于 **Flask** 的 **Python** 服务。它最初只是团队内部工具，后来决定开源。
+
+它负责管理用户账号与登录认证，未来还会加入更多 API。
+
+## 功能特性
+
+- 邮箱验证码登录
+- 邮箱 + 密码登录
+- 使用 Redis 存储用户数据
+- 通过 SMTP 发送验证邮件与欢迎邮件
+- 可自定义的 HTML 邮件与页面模板
+
+## 环境要求
+
+| 要求 | 说明 |
+|---|---|
+| Git | 用于克隆仓库 |
+| Python 3.11.3 | 已验证的运行时版本 |
+| Redis | 存储用户数据与验证码 |
+| SMTP 服务器 | 发送验证邮件与欢迎邮件 |
+
+## 源码地址
+
+<Cards>
+  <Card title="GitHub 仓库" href="https://github.com/CODPEX/ALoginAPI" description="CODPEX/ALoginAPI —— 源码与问题反馈。" />
+</Cards>
+
+## 下一步
+
+<Cards>
+  <Card title="安装" href="/zh/docs/products/a-login-api/quickstart" description="安装 Python、克隆仓库并启动服务。" />
+  <Card title="配置" href="/zh/docs/products/a-login-api/config" description="配置 Redis、SMTP 与应用参数。" />
+  <Card title="API 请求" href="/zh/docs/products/a-login-api/api-reference" description="验证码、登录接口与响应说明。" />
+  <Card title="模板" href="/zh/docs/products/a-login-api/template" description="自定义页面与邮件模板。" />
+</Cards>

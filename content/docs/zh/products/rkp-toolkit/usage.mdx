@@ -1,0 +1,113 @@
+---
+id: 3
+title: 命令与配置
+description: RKP Toolkit 的命令行、参数、镜像配置与依赖说明。
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# 命令与配置
+
+## 主要命令
+
+```bash
+python3 rkp_toolkit.py all      # 自检 + 签发 + 打包（默认）
+python3 rkp_toolkit.py check    # 仅自检
+python3 rkp_toolkit.py probe    # 打印 HAL 版本与支持的曲线
+python3 rkp_toolkit.py issue    # 获取 EEK、生成 CSR、提交 Google
+python3 rkp_toolkit.py keybox   # 从已有证书打包 keybox.xml
+python3 rkp_toolkit.py verify   # 校验已有 keybox.xml
+```
+
+`issue.sh` 默认执行的就是 `all`。
+
+## 常用参数
+
+| 参数 | 含义 |
+|---|---|
+| `--workdir DIR` | 工作目录（默认 `rkp_out`） |
+| `-o FILE` | 输出 keybox 路径 |
+| `--no-archive` | 保留产物原位，跳过归档 |
+
+示例：
+
+```bash
+python3 rkp_toolkit.py all --workdir ~/rkp_work -o ~/rkp_work/my-keybox.xml
+```
+
+## 镜像配置
+
+`setup.sh` 负责全部流程：**测速挑选镜像 → 写入 `sources.list` → 安装依赖 → 自检**。一般无需手动运行；`issue.sh` 在缺东西时会自动调用。
+
+### 手动用法
+
+```bash
+sh setup.sh              # 自动：测速并选最快
+sh setup.sh --cn         # 仅中文镜像
+sh setup.sh --global     # 仅全球镜像
+sh setup.sh --mirror URL # 强制指定镜像
+sh setup.sh --restore    # 恢复已保存配置
+sh setup.sh --repair     # 清除 apt 锁与过期索引
+sh setup.sh --dry-run    # 仅测速，不做修改
+```
+
+### 测速原理
+
+对每个候选镜像测量 `$base/termux-main/dists/stable/Release` 的往返时延，选取最快的。时延从设备端测量，因此不同网络结果不同。
+
+写入内容示例：
+
+```bash
+# /data/data/com.termux/files/usr/etc/apt/sources.list
+deb https://mirrors.bfsu.edu.cn/termux/apt/termux-main/ stable main
+```
+
+原配置会备份为 `sources.list.rkp.bak`，`--restore` 可恢复。
+
+### 自动回退
+
+写入后执行 `pkg update`，失败则自动换下一个最快镜像重试，直到成功。若全部失败：
+
+- 依赖已存在 → 恢复原配置并继续
+- 依赖缺失 → 恢复原配置并以建议信息退出
+
+只有当现有配置**不是**本工具生成时才会做备份，避免把坏配置当成"原始备份"。
+
+### 本地问题会被识别
+
+所有镜像都失败时，脚本会打印 apt 的**真实错误**（最后 12 行），并判断是否为本地问题：
+
+| 检测到 | 含义 | 处理 |
+|---|---|---|
+| `lock` | 存在锁 | 停止切换，建议 `--repair` |
+| `dns` | DNS 解析失败 | 建议检查网络 |
+| `keyring` | GPG 签名失败 | 建议 `termux-change-repo` |
+| `disk` | 空间不足 | 建议清理 |
+
+本地问题换镜像无济于事，因此**立即停止**，不再尝试全部 8 个候选。
+
+## 依赖清单
+
+| 包 | 用途 |
+|---|---|
+| `python` | 运行工具 |
+| `python-cryptography` | 证书解析与打包 |
+| `curl` | 与 Google RKP 服务器通信 |
+
+`rkp_bridge.jar` 已内置；除系统 `app_process` 外，设备上无需额外 Java 运行时。
+
+> Termux 上 `pip install cryptography` 会从源码编译，且链接 `libssl` 失败。请使用 `pkg install python-cryptography`，`setup.sh` 已自动处理。
+
+## 自测
+
+`rkp_csr.py` 无需设备即可验证 Android 13 的 CSR 组装逻辑：
+
+```bash
+python3 rkp_csr.py
+```
+
+运行 8 组断言，覆盖字节布局、截断检测与 CBOR 编码，最后打印 `ALL TESTS PASSED`。

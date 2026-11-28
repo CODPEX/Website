@@ -1,0 +1,4 @@
+{
+  "title": "RKP Toolkit",
+  "pages": ["index", "quickstart", "usage", "build", "internals", "troubleshooting"]
+}

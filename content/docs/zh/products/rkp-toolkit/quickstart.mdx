@@ -1,0 +1,121 @@
+---
+id: 2
+title: 快速开始
+description: 安装 Termux、下载 Release、签发 RKP 证书并找到生成的 keybox.xml。
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# 快速开始
+
+以下命令全部在 Android 设备本机的 Termux + root 环境中执行。
+
+## 1. 安装 Termux
+
+下载 Termux **v0.118.3 或更新版本**：
+
+| 来源 | 链接 |
+|---|---|
+| GitHub Releases（推荐） | https://github.com/termux/termux-app/releases |
+| F-Droid（中文） | https://f-droid.org/zh/packages/com.termux/ |
+| F-Droid（英文） | https://f-droid.org/en/packages/com.termux/ |
+
+> [!WARNING] 不要从 Google Play 安装 Termux。Play 版本停留在 0.118.0，切换镜像后会出现 `index update failed`。
+
+检查版本：
+
+```bash
+echo $TERMUX_VERSION
+# 期望：0.118.3 或更新
+```
+
+`issue.sh` 启动时会检查版本，低于 0.118.3 会给出警告。
+
+## 2. 下载工具包
+
+```bash
+pkg install -y unzip curl
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/latest/download/rkp-toolkit.zip
+unzip rkp-toolkit.zip
+cd rkp-toolkit
+```
+
+`latest/download` 链接始终指向最新版本，文件名不变。如需固定版本：
+
+```bash
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/download/v1.0.0/rkp-toolkit.zip
+```
+
+可选校验完整性：
+
+```bash
+curl -LO https://github.com/kanseijo/rkp-toolkit/releases/latest/download/SHA256SUMS
+sha256sum -c SHA256SUMS
+```
+
+## 3. 签发证书
+
+```bash
+./issue.sh
+```
+
+首次运行会检查依赖，并调用 `setup.sh`：测速挑选 Termux 镜像、写入 `sources.list`、安装缺失组件。
+
+## 4. 找到输出
+
+每次运行（成功与否）都会归档到带日期的批次目录：
+
+```text
+~/rkp_out/
+├── 2026-11-21_0001/
+│   ├── keybox.xml
+│   ├── certs.der
+│   ├── key.der
+│   └── ...
+├── 2026-11-21_0002/
+└── 2026-11-22_0001/   # 次日从 0001 重新开始
+```
+
+批次编号只扫描当天目录：若已存在 `_0001`、`_0002`，下一次就是 `_0003`。
+
+保留产物不归档：
+
+```bash
+python3 rkp_toolkit.py all --no-archive
+```
+
+> [!DANGER] 生成的 `keybox.xml` 含设备私钥，切勿提交到仓库或分享。
+
+## 5. 可选的手动部署
+
+工具本身绝不自动部署。如需从命令行测试 TEESimulator：
+
+```bash
+cp ~/rkp_out/2026-11-21_0001/keybox.xml /data/adb/teesim/real_keybox.xml
+chmod 600 /data/adb/teesim/real_keybox.xml
+kill $(pidof keystore2)
+```
+
+keybox 在 `keystore2` 启动时加载，因此**必须重启 keystore2**。
+
+## 证书有效期
+
+签发的证书有效期较短，通常约两周。打包时会打印叶子证书有效期：
+
+```text
+leaf validity: 2026-11-19 06:03:06 -> 2026-12-02 13:54:37 UTC
+11 days left on this certificate
+```
+
+过期前需重新签发，**没有续期机制**。
+
+## 下一步
+
+<Cards>
+  <Card title="命令与配置" href="/zh/docs/products/rkp-toolkit/usage" description="完整命令行、参数与镜像配置。" />
+  <Card title="故障排查与安全" href="/zh/docs/products/rkp-toolkit/troubleshooting" description="常见失败处理与安全注意事项。" />
+</Cards>

@@ -1,0 +1,134 @@
+---
+id: 5
+title: How It Works
+description: Protocol flow, Android version differences, CSR assembly, and the two hard keybox requirements.
+authors:
+  - kanseijo
+contributors:
+  - FranklinCN
+external: true
+repo: https://github.com/kanseijo/rkp-toolkit
+---
+
+# How It Works
+
+## Protocol flow
+
+```text
+A. fetchEekChain      POST /v1:fetchEekChain
+                      → challenge + end-to-end encryption key chain
+B. TEE generates CSR  HAL generateCertificateRequest(V2)(...)
+                      → CSR signed by the device TEE
+C. signCertificates   POST /v1:signCertificates?challenge=...
+                      → Google returns the certificate chain
+D. Package keybox.xml leaf certificate first, SEC1 private key
+```
+
+The endpoints use gRPC colon syntax: `/v1:fetchEekChain` returns 200, while `/v1/fetchEekChain` returns 404.
+
+## Android version differences
+
+The two paths differ significantly; the tool chooses automatically.
+
+### Where the RKP backend lives
+
+| | Android 13 | Android 14+ |
+|---|---|---|
+| Backend | Built into `keystore2` | `rkpdapp` APK |
+| Service | `android.security.remoteprovisioning` | `/apex/com.android.rkpd*/priv-app/*` |
+| Standalone APK | **None** | Yes |
+
+On Android 13, `keystore2` registers `android.security.remoteprovisioning` with servicemanager itself, so searching for an APK always fails there. The HAL service name is identical on both versions, so issuing itself does not change.
+
+### Self-check order
+
+The tool tries the following in order and passes on the first hit:
+
+1. `/apex/com.android.rkpd*/priv-app/*/*.apk` (Android 14+)
+2. `android.security.remoteprovisioning` service (Android 13)
+3. The HAL service itself (`service check .../default`)
+
+`service` is invoked by absolute path because `su -c` shells usually have a minimal `PATH`. `vndservice` is also checked because vendor AIDL HALs may register on `/dev/vndbinder`.
+
+### HAL versions and method mapping
+
+| | Android 12/13 (HAL v1/v2) | Android 14+ (HAL v3) |
+|---|---|---|
+| HAL method | `generateCertificateRequest` | `generateCertificateRequestV2` |
+| EEK | **Required** | Not needed |
+| CSR source | HAL returns three parts, **client assembles** | HAL returns the complete CSR |
+| CSR structure | `[[DeviceInfo, {}], challenge, ProtectedData, MacedKeys]` | `AuthenticatedRequest<CsrPayload>` |
+| Version field | None | Yes (`1`) |
+
+The tool does not fully trust the reported version: it tries `generateCertificateRequestV2` first, then falls back to `generateCertificateRequest` with both EEK curves.
+
+### Android 13 CSR assembly
+
+The HAL returns three independent pieces:
+
+```text
+mac           : HMAC-256(EK_mac, KeysToMacStructure)   32 bytes
+deviceInfo    : CBOR-encoded VerifiedDeviceInfo
+protectedData : COSE_Encrypt from the BCC
+```
+
+`rkp_csr.py` assembles them into the four-element array Google expects, matching AOSP `composeCertificateRequest()`:
+
+```text
+[ [VerifiedDeviceInfo, {}], challenge, ProtectedData, MacedKeys ]
+```
+
+Common pitfalls:
+
+- The DeviceInfo pair is `[verified, {}]`, **not** `[{}, verified]`
+- `MacedKeys` uses a nil payload, an empty bstr protected header, and the HAL-provided MAC as tag
+- There is **no** top-level version field; it exists only in v3
+
+AOSP's `.add(std::vector<uint8_t>(0))` produces an empty bstr (`0x40`), **not** an empty array (`0x80`).
+
+Probe the device:
+
+```bash
+python3 rkp_toolkit.py probe
+```
+
+## Two hard keybox requirements
+
+### 1. The private key must be SEC1
+
+```xml
+<PrivateKey format="pem">
+  -----BEGIN EC PRIVATE KEY-----   <!-- must be SEC1 -->
+```
+
+TEESimulator parses keys with BoringSSL's `EC_KEY_parse_private_key`, which only accepts **SEC1 (RFC 5915)**. Supplying **PKCS#8** (`BEGIN PRIVATE KEY`) produces:
+
+```text
+DECODE_ERROR, ec_asn1.cc:48
+failing DeviceGenerateKey request with error
+```
+
+The app then reports `-30000`.
+
+### 2. The certificate chain must be leaf-first
+
+```xml
+<CertificateChain>
+  <NumberOfCertificates>4</NumberOfCertificates>
+  <Certificate type="leaf">…</Certificate>   <!-- holds the private key -->
+  <Certificate type="intermediate">…</Certificate>
+  <Certificate type="intermediate">…</Certificate>
+  <Certificate type="root">…</Certificate>   <!-- root last -->
+</CertificateChain>
+```
+
+Putting the root first produces `BAD_SIGNATURE`.
+
+## Known limitations
+
+- **Vendor differences**: in the AOSP Rust reference, v1/v2 `generate_cert_req()` is only an `Unimplemented` placeholder; real implementations come from SoC vendors and may behave differently.
+- **EEK curve**: the reported `supportedEekCurve` is preferred, but both curves are attempted; wrong vendor reporting can still cause differences.
+- **Real device required**: the CSR must be signed by the device TEE and cannot be simulated on a server.
+- **Short-lived certificates**: roughly two weeks; re-issue when expired.
+- **Root required**: reaching the RKP HAL requires root.
+- **Hard-coded MAC key**: `MacedPublicKey` uses the public test MAC key, which is why a CSR can be built without holding the device key.

@@ -1,0 +1,73 @@
+---
+id: 2
+title: 安装
+description: 在 Windows、Linux、macOS 上安装 Python 3.11.3、克隆 A-Login API 并启动服务。
+authors:
+  - Franklincn
+---
+
+# 安装
+
+开始前请准备一台服务器或电脑，并安装 **Git**。
+
+> **必须先安装 Git。** 可从 [git-scm.com](https://git-scm.com/downloads) 下载，Linux 可运行 `sudo apt install git`。
+
+## Windows
+
+1. 下载并安装 [Python 3.11.3](https://www.python.org/downloads/release/python-3113/)
+2. 克隆仓库：
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. 运行 `run.bat` 启动服务。
+4. 完成。使用前请先完成[配置](/zh/docs/products/a-login-api/config)。
+
+## Linux
+
+1. 安装 Python 3.11.3，或使用系统包：
+
+```bash
+sudo apt update
+sudo apt install python3
+```
+
+2. 克隆仓库：
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. 启动服务：
+
+```bash
+sh run.sh
+```
+
+4. 完成。
+
+## macOS
+
+> macOS 未经官方测试。如发现问题，请向上游仓库反馈。
+
+1. 下载并安装 [Python 3.11.3](https://www.python.org/downloads/release/python-3113/)
+2. 克隆仓库：
+
+```bash
+git clone https://github.com/CODPEX/ALoginAPI.git
+cd ALoginAPI
+```
+
+3. 安装依赖并启动：
+
+```bash
+pip3 install -r requirements.txt
+python3 main.py
+```
+
+## 安装之后
+
+在填写 `config.yml` 之前，服务无法正常工作。请继续阅读[配置](/zh/docs/products/a-login-api/config)。
